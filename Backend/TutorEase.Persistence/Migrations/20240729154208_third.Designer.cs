@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TutorEase.Persistence;
 
@@ -11,9 +12,11 @@ using TutorEase.Persistence;
 namespace TutorEase.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240729154208_third")]
+    partial class third
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -139,51 +142,6 @@ namespace TutorEase.Persistence.Migrations
                     b.ToTable("T_USER_TOKENS", (string)null);
                 });
 
-            modelBuilder.Entity("TutorEase.Domain.Entities.Schedule", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)")
-                        .HasColumnName("ID");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("CREATED_AT");
-
-                    b.Property<string>("Day")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("StudentId")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("Time")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Time1")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TutorId")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StudentId");
-
-                    b.HasIndex("TutorId");
-
-                    b.ToTable("Schedules", (string)null);
-                });
-
             modelBuilder.Entity("TutorEase.Domain.Entities.T_Role", b =>
                 {
                     b.Property<string>("Id")
@@ -219,15 +177,15 @@ namespace TutorEase.Persistence.Migrations
                         {
                             Id = "510057bf-a91a-4398-83e7-58a558ae5edd",
                             ConcurrencyStamp = "71f781f7-e957-469b-96df-9f2035147a23",
-                            Name = "Tutor",
-                            NormalizedName = "TUTOR"
+                            Name = "Administrator",
+                            NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
                             Id = "76cdb59e-48da-4651-b300-a20e9c08a750",
                             ConcurrencyStamp = "71f781f7-e957-469b-96df-9f2035147a56",
-                            Name = "Student",
-                            NormalizedName = "STUDENT"
+                            Name = "Log",
+                            NormalizedName = "LOG"
                         });
                 });
 
@@ -390,7 +348,7 @@ namespace TutorEase.Persistence.Migrations
                             NormalizedUserName = "YUMMY",
                             PasswordHash = "AQAAAAEAACcQAAAAEBLjouNqaeiVWbN0TbXUS3+ChW3d7aQIk/BQEkWBxlrdRRngp14b0BIH0Rp65qD6mA==",
                             PhoneNumberConfirmed = true,
-                            PoolRole = 2,
+                            PoolRole = 1,
                             SecurityStamp = "71f781f7-e957-469b-96df-9f2035147e93",
                             State = "",
                             Status = "Active",
@@ -420,7 +378,7 @@ namespace TutorEase.Persistence.Migrations
                             NormalizedUserName = "EBUBE",
                             PasswordHash = "AQAAAAEAACcQAAAAEBLjouNqaeiVWbN0TbXUS3+ChW3d7aQIk/BQEkWBxlrdRRngp14b0BIH0Rp65qD6mA==",
                             PhoneNumberConfirmed = true,
-                            PoolRole = 2,
+                            PoolRole = 1,
                             SecurityStamp = "71f781f7-e957-469b-96df-9f2035147e37",
                             State = "",
                             Status = "Active",
@@ -561,25 +519,6 @@ namespace TutorEase.Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("TutorEase.Domain.Entities.Schedule", b =>
-                {
-                    b.HasOne("TutorEase.Domain.Entities.T_User", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("TutorEase.Domain.Entities.T_User", "Tutor")
-                        .WithMany()
-                        .HasForeignKey("TutorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Student");
-
-                    b.Navigation("Tutor");
                 });
 
             modelBuilder.Entity("TutorEase.Domain.Entities.T_UserRole", b =>

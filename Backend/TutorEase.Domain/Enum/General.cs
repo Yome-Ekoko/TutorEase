@@ -31,7 +31,13 @@
     public enum PoolRole
     {
         Administrator = 1,
-        AppUser = 2,
-        Driver = 3
+        Tutor = 2,
+        Student=3,
+    }
+    public enum BookingStatus
+    {
+        Pending,
+        Accepted,
+        Rejected
     }
 }

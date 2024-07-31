@@ -442,94 +442,63 @@ namespace TutorEase.Core.Implementation
         }
         public async Task<Response<string>> RegisterAsync(RegisterRequest request)
         {
-
-
             if (!await IsEmailAllowedAsync(request.Email))
             {
-                throw new ApiException("Please enter valid email address.");
+                throw new ApiException("Please enter a valid email address.");
             }
 
-            bool isPhoneNumber = Regex.IsMatch(request.PhoneNumber, @"^\(?([0-9]{3})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$");
-            if (isPhoneNumber == false)
+            if (!Regex.IsMatch(request.PhoneNumber, @"^\(?([0-9]{3})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$"))
             {
-                throw new ApiException("Please enter valid PhoneNumber");
+                throw new ApiException("Please enter a valid PhoneNumber.");
             }
 
             var existingUser = await _userManager.FindByEmailAsync(request.Email);
 
             if (existingUser != null)
             {
-                throw new Exception("User already exists.");
+                throw new ApiException("User already exists.");
             }
-            var folder = RandomGenerator.Generate("usr", 5);
-            var file = "";
-            try
-            {
-                file = (request.Image != null) ? await _imageService.UploadSingle(request.Image, folder) : null;
-            }
-            catch (Exception ex)
-            {
-                throw new ApiException($"Id upload failed");
-            }
-
-            bool isBVNValid = Regex.IsMatch(request.Bvn, @"^\d{11}$");
-            if (isBVNValid == false)
-            {
-                throw new ApiException("Please enter a valid BVN");
-            }
-
-
 
             var newUser = new T_User
             {
-
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 Email = request.Email,
                 PhoneNumber = request.PhoneNumber,
-                Bvn = request.Bvn,
-                Nin = request.Nin,
-                HouseNumber = request.HouseNumber,
+                ContactAddress = request.ContactAddress,
                 State = request.State,
-                StreetName = request.StreetName,
-                CityOrTown = request.CityOrTown,
-                Landmark = request.Landmark,
-                ImageUrl = (request.Image != null) ? file : _defaultImageUrl,
+                ImageUrl = request.Image,
                 UserName = request.Email,
                 CreatedAt = DateTime.Now
-
             };
-
-
 
             var response = await _userManager.CreateAsync(newUser);
 
             if (!response.Succeeded)
             {
-                throw new ApiException("Unable to save user");
+                throw new ApiException("Unable to save user.");
             }
 
             if (!await _roleManager.RoleExistsAsync(request.Role))
             {
-                throw new ApiException($"This role doesn't exists. Please check your roles and try again");
+                await _userManager.DeleteAsync(newUser); // Rollback user creation
+                throw new ApiException("This role doesn't exist. Please check your roles and try again.");
             }
 
-            IdentityResult roleResult = await _userManager.AddToRoleAsync(newUser, request.Role);
+            var roleResult = await _userManager.AddToRoleAsync(newUser, request.Role);
 
             if (!roleResult.Succeeded)
             {
-                // Roll back user creation and throw an error
-                await _userManager.DeleteAsync(newUser);
-                throw new ApiException($"An error occured while adding the user to the role");
+                await _userManager.DeleteAsync(newUser); // Rollback user creation
+                throw new ApiException("An error occurred while adding the user to the role.");
             }
-
 
             await SendOtp(new OtpRequest { email = newUser.Email });
 
-            return new Response<string>(newUser.Id, message: $"User Registered. Please confirm your account with the link sent to your email");
-
+            return new Response<string>(newUser.Id, "User Registered. Please confirm your account with the link sent to your email.");
         }
-       
+
+
         private async Task<bool> IsEmailAllowedAsync(string email)
         {
             bool isEmail = Regex.IsMatch(email, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase);

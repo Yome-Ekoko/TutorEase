@@ -33,7 +33,9 @@ namespace TutorEase.Persistence
 
 
         public DbSet<Tutor> Tutor { get; set; }
+        public DbSet<Schedule> Schedules { get; set; }
 
+   
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -126,6 +128,46 @@ namespace TutorEase.Persistence
                     .WithOne(x => x.user)
                     .HasForeignKey<Tutor>(x => x.UserId);
             });
+            #region Schedule Entity
+            modelBuilder.Entity<Schedule>(entity =>
+            {
+                entity.ToTable("Schedules");
+
+                entity.Property(x => x.Id)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("ID");
+
+                entity.Property(x => x.TutorId)
+                    .IsRequired()
+                    .HasMaxLength(256); 
+
+                entity.Property(x => x.StudentId)
+                    .IsRequired()
+                    .HasMaxLength(256); 
+
+                entity.Property(x => x.Day)
+                    .IsRequired();
+
+                entity.Property(x => x.Time)
+                    .IsRequired();
+
+                entity.Property(x => x.Time1)
+                    .IsRequired();
+
+                entity.Property(x => x.Status)
+                    .IsRequired();
+
+                entity.HasOne(s => s.Tutor)
+                    .WithMany()
+                    .HasForeignKey(s => s.TutorId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(s => s.Student)
+                    .WithMany()
+                    .HasForeignKey(s => s.StudentId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+            #endregion
 
             modelBuilder.Entity<T_Role>(entity =>
             {
@@ -219,6 +261,8 @@ namespace TutorEase.Persistence
                     .HasMaxLength(256); // Adjust column length
                 entity.Property(x => x.UserId)
                     .HasColumnName("USER_ID");
+
+
             });
             #endregion Identity Entities
 

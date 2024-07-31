@@ -8,17 +8,11 @@ namespace TutorEase.Domain.Entities
         public string FirstName { get; set; } = string.Empty;
         public string User { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
-        public string Bvn { get; set; } = string.Empty;
-        public string Nin { get; set; } = string.Empty;
-        public string HouseNumber { get; set; } = string.Empty;
-        public string StreetName { get; set; } = string.Empty;
-        public string Landmark { get; set; } = string.Empty;
-        public string CityOrTown { get; set; } = string.Empty;
-        public string Lga { get; set; } = string.Empty;
+        public string ContactAddress { get; set; } = string.Empty;
         public string State { get; set; } = string.Empty;
         public bool IsActive { get; set; } = true;
         public string ImageUrl { get; set; } = string.Empty;
-        public PoolRole PoolRole { get; set; } = PoolRole.AppUser;
+        public PoolRole PoolRole { get; set; } 
         public UserStatus Status { get; set; }
         public bool IsLoggedIn { get; set; }
         public DateTime LastLoginTime { get; set; }

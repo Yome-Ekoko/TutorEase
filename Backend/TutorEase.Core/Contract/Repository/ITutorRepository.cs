@@ -14,6 +14,6 @@ namespace TutorEase.Core.Contract.Repository
         Task<Tutor> Add(Tutor tutor);
         Task<Tutor> Update(Tutor tutor);
         Task Delete(string id);
-        Task<Tutor> GetTutor();
+        Task<Tutor> GetTutorAsync();
     }
 }

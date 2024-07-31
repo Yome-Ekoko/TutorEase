@@ -11,13 +11,13 @@ namespace TutorEase.Persistence.Seeds
             {
                 new T_UserRole
                 {
-                    RoleId = RoleConstants.Log,
-                    UserId = RoleConstants.LogUser
+                    RoleId = RoleConstants.Student,
+                    UserId = RoleConstants.StudentUser
                 },
                 new T_UserRole
                 {
-                    RoleId = RoleConstants.Administrator,
-                    UserId = RoleConstants.AdministratorUser
+                    RoleId = RoleConstants.Tutor,
+                    UserId = RoleConstants.TutorUser
                 }
             };
         }

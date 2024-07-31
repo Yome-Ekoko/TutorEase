@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace TutorEase.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(Roles = "Administrator")]
+   // [Authorize(Roles = "Administrator")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -40,32 +40,32 @@ namespace TutorEase.Controllers
         {
             return Ok(await _userService.GetUserById(id, HttpContext.RequestAborted));
         }
-        [HttpPost("addUser")]
-        public async Task<ActionResult<Response<string>>> AddUser(AddUserRequest request)
-        {
-            return Ok(await _userService.AddUserAsync(request, HttpContext.RequestAborted));
-        }
-        [HttpPost("editUser")]
-        public async Task<ActionResult<Response<string>>> EditUser([FromBody] EditUserRequest request)
-        {
-            return Ok(await _userService.EditUserAsync(request, HttpContext.RequestAborted));
-        }
-        [HttpPost("deleteUser")]
-        public async Task<ActionResult<Response<string>>> DeleteUser([FromBody] DeleteUserRequest request)
-        {
-            return Ok(await _userService.DeleteUserAsync(request, HttpContext.RequestAborted));
-        }
+        //[HttpPost("addUser")]
+        //public async Task<ActionResult<Response<string>>> AddUser(AddUserRequest request)
+        //{
+        //    return Ok(await _userService.AddUserAsync(request, HttpContext.RequestAborted));
+        //}
+        //[HttpPost("editUser")]
+        //public async Task<ActionResult<Response<string>>> EditUser([FromBody] EditUserRequest request)
+        //{
+        //    return Ok(await _userService.EditUserAsync(request, HttpContext.RequestAborted));
+        //}
+        //[HttpPost("deleteUser")]
+        //public async Task<ActionResult<Response<string>>> DeleteUser([FromBody] DeleteUserRequest request)
+        //{
+        //    return Ok(await _userService.DeleteUserAsync(request, HttpContext.RequestAborted));
+        //}
         [AllowAnonymous]
         [HttpPost("resetUser")]
         public async Task<ActionResult<Response<string>>> ResetUser([FromBody] ResetUserRequest request)
         {
             return Ok(await _userService.ResetUserAsync(request));
         }
-        [HttpPost("resetUserLockout")]
-        public async Task<ActionResult<Response<string>>> ResetUserLockout([FromBody] ResetUserRequest request)
-        {
-            return Ok(await _userService.ResetUserLockoutAsync(request));
-        }
+        //[HttpPost("resetUserLockout")]
+        //public async Task<ActionResult<Response<string>>> ResetUserLockout([FromBody] ResetUserRequest request)
+        //{
+        //    return Ok(await _userService.ResetUserLockoutAsync(request));
+        //}
         [AllowAnonymous]
         [HttpPost("changePasswordWithToken")]
         public async Task<ActionResult<Response<string>>> PasswordReset([FromBody] ChangePasswordRequest request)
@@ -74,7 +74,7 @@ namespace TutorEase.Controllers
         }
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<ActionResult<Response<string>>> Register([FromBody] RegisterRequest request)
+        public async Task<ActionResult<Response<string>>> Register([FromBody]RegisterRequest request)
         {
             return Ok(await _userService.RegisterAsync(request));
         }

@@ -38,29 +38,48 @@ namespace TutorEase.Core.Repository
 
         public async Task<Tutor> GetById(string id)
         {
-
-            using (var scope = _serviceScopeFactory.CreateScope())
+            try
             {
-                var dbContext = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
-                var res = await dbContext.Tutor
-                    .FirstOrDefaultAsync(u => u.Id == id) ?? throw new ApiException("Payer not found");
+                using (var scope = _serviceScopeFactory.CreateScope())
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
+                    var res = await dbContext.Tutor
+                        .FirstOrDefaultAsync(u => u.Id == id) ?? throw new ApiException("Tutor not found");
 
-                return res;
 
+                    return res;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException();
             }
         }
 
-        public async Task<Tutor> GetTutor()
+        public async Task<Tutor> GetTutorAsync()
         {
-            var userId = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value ?? "";
+            var userId = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ApiException("User not found.");
+            }
 
             using (var scope = _serviceScopeFactory.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
-                return await dbContext.Tutor.
-                    FirstOrDefaultAsync(x => x.UserId == userId);
+                var tutor = await dbContext.Tutor.FirstOrDefaultAsync(x => x.UserId == userId);
+
+                if (tutor == null)
+                {
+                    throw new ApiException("Tutor not found.");
+                }
+
+                return tutor;
             }
         }
+
         //public async Task<Tutor> GetTutor(string userId)
         //{
         //    using (var scope = _serviceScopeFactory.CreateScope())

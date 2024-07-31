@@ -7,6 +7,9 @@ using TutorEase.Domain.Common;
 
 namespace TutorEase.Controllers
 {
+    [Route("api/[controller]")]
+    [Authorize(Roles = "Tutor")]
+    [ApiController]
     public class TutorController : ControllerBase
     {
         private readonly ITutorService _tutorService;
@@ -21,14 +24,14 @@ namespace TutorEase.Controllers
             var response = await _tutorService.AddTutor(request);
             return Ok(response);
         }
-        [Authorize]
+        [AllowAnonymous]
         [HttpPost("GetTutor")]
         public async Task<ActionResult<Response<AddTutorResponse>>> GetPayer()
         {
             var response = await _tutorService.GetTutor();
             return Ok(response);
         }
-        [Authorize(Roles = "Administrator")]
+        [AllowAnonymous]
         [HttpPost("GetTutorById/{id}")]
         public async Task<ActionResult<Response<AddTutorResponse>>> GetPayerById(string id)
         {
@@ -52,7 +55,6 @@ namespace TutorEase.Controllers
             return Ok(response);
         }
 
-        [Authorize]
         [HttpPost("updateTutor")]
         public async Task<ActionResult<Response<AddTutorResponse>>> UpdateStudent([FromBody] UpdateTutorRequest request)
         {

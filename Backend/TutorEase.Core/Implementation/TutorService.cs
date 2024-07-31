@@ -25,7 +25,7 @@ namespace TutorEase.Core.Implementation
         private readonly UserManager<T_User> _userManager;
         private readonly ITutorRepository _tutorRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
-         private readonly IApplicationDbContext _context;
+        private readonly IApplicationDbContext _context;
         private readonly IAPIImplementation _apiImplementation;
 
 
@@ -47,24 +47,21 @@ namespace TutorEase.Core.Implementation
 
         public async Task<Response<AddTutorResponse>> AddTutor(AddTutorRequest request)
         {
-            var userId = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value ?? "";
+            var userId = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
 
-            if (userId == null)
+            if (string.IsNullOrEmpty(userId))
             {
-                throw new ApiException("User not found");
+                throw new ApiException("User not found.");
             }
 
-            var existingPayer = await _tutorRepository.GetTutor();
-            if (existingPayer != null)
+            var existingTutor = await _tutorRepository.GetTutorAsync();
+            if (existingTutor != null)
             {
-                throw new ApiException($"{existingPayer.Id} Tutor already exists for this user.");
+                throw new ApiException("Tutor already exists for this user.");
             }
-
-
 
             var newTutor = new Tutor
             {
-
                 AvailableDays = request.AvailableDays,
                 AvailableTime = request.AvailableTime,
                 AvailableTime1 = request.AvailableTime1,
@@ -74,22 +71,20 @@ namespace TutorEase.Core.Implementation
                 Languages = request.Languages,
                 PreferredCurrency = request.PreferredCurrency,
                 UserId = userId,
-                PreferredCommunication=request.PreferredCommunication,
+                PreferredCommunication = request.PreferredCommunication,
                 TargetedClass = request.TargetedClass
-
-                
-                //
-
             };
-            var response = await _tutorRepository.Add(newTutor) ?? throw new ApiException("Unable to save Tutor");
 
-
-           // await _context.SaveChangesAsync();
+            var response = await _tutorRepository.Add(newTutor);
+            if (response == null)
+            {
+                throw new ApiException("Unable to save Tutor.");
+            }
 
             var result = _mapper.Map<AddTutorResponse>(response);
-
             return new Response<AddTutorResponse>(result);
         }
+
         public async Task<Response<List<AddTutorResponse>>> GetAllTutor()
         {
             var student = await _tutorRepository.GetAll();
@@ -100,7 +95,7 @@ namespace TutorEase.Core.Implementation
 
         public async Task<Response<AddTutorResponse>> GetTutor()
         {
-            var student = await _tutorRepository.GetTutor();
+            var student = await _tutorRepository.GetTutorAsync();
             var result = _mapper.Map<AddTutorResponse>(student);
 
             return new Response<AddTutorResponse>(result);
@@ -131,7 +126,7 @@ namespace TutorEase.Core.Implementation
             existingTutor.Qualifications = (request.Qualifications == null || !request.Qualifications.Any()) ? existingTutor.Qualifications : request.Qualifications;
             existingTutor.Languages = (request.Languages == null || !request.Languages.Any()) ? existingTutor.Languages : request.Languages;
             existingTutor.Introduction = string.IsNullOrEmpty(request.Introduction) ? existingTutor.Introduction : request.Introduction;
-            existingTutor.AvailableDays = (request.AvailableDays == null || !request.AvailableDays.Any()) ? existingTutor.AvailableDays: request.AvailableDays;
+            existingTutor.AvailableDays = (request.AvailableDays == null || !request.AvailableDays.Any()) ? existingTutor.AvailableDays : request.AvailableDays;
             existingTutor.AvailableTime = (request.AvailableTime == null || !request.AvailableTime.Any()) ? existingTutor.AvailableTime : request.AvailableTime;
             existingTutor.AvailableTime1 = (request.AvailableTime1 == null || !request.AvailableTime1.Any()) ? existingTutor.AvailableTime1 : request.AvailableTime1;
             existingTutor.HourlyRate = string.IsNullOrEmpty(request.HourlyRate) ? existingTutor.HourlyRate : request.HourlyRate;

@@ -10,15 +10,15 @@ namespace TutorEase.Persistence.Seeds
             return new List<T_Role>()
             {
                 new() {
-                    Id = RoleConstants.Administrator,
-                    Name = Roles.Administrator,
-                    NormalizedName = Roles.Administrator.ToUpper(),
+                    Id = RoleConstants.Tutor,
+                    Name = Roles.Tutor,
+                    NormalizedName = Roles.Tutor.ToUpper(),
                     ConcurrencyStamp = "71f781f7-e957-469b-96df-9f2035147a23"
                 },
                 new() {
-                    Id = RoleConstants.Log,
-                    Name = Roles.Log,
-                    NormalizedName = Roles.Log.ToUpper(),
+                    Id = RoleConstants.Student,
+                    Name = Roles.Student,
+                    NormalizedName = Roles.Student.ToUpper(),
                     ConcurrencyStamp = "71f781f7-e957-469b-96df-9f2035147a56"
                 }
             };

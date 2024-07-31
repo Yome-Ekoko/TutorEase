@@ -58,6 +58,8 @@ namespace TutorEase.Infrastructure.Extension
             serviceCollection.AddTransient<INotificationService, NotificationService>();
             serviceCollection.AddTransient<IOtpRepository, OtpRepository>();
             serviceCollection.AddTransient<ITutorRepository, TutorRepository>();
+            serviceCollection.AddTransient<IScheduleRepository, ScheduleRepository>();
+
            
         }
 
@@ -71,8 +73,9 @@ namespace TutorEase.Infrastructure.Extension
             serviceCollection.AddScoped<IApplicationDbContext>(provider => provider.GetService<ApplicationDbContext>());
             serviceCollection.AddScoped<IUserService, UserService>();
             serviceCollection.AddScoped<ITemplateService, TemplateService>();
-            serviceCollection.AddTransient<IImageService, ImageService>();
-            serviceCollection.AddTransient<ITutorService, TutorService>();
+            serviceCollection.AddScoped<IImageService, ImageService>();
+            serviceCollection.AddScoped<ITutorService, TutorService>();
+            serviceCollection.AddScoped<IScheduleService, ScheduleService>();
 
         }
 
@@ -142,7 +145,12 @@ namespace TutorEase.Infrastructure.Extension
             serviceCollection.AddOptions<JWTSettings>().BindConfiguration("JWTSettings");
             serviceCollection.AddOptions<AdminOptions>().BindConfiguration("AdminOptions");
             serviceCollection.AddOptions<DatabaseOptions>().BindConfiguration("DatabaseOptions");
+            serviceCollection.AddOptions<ExternalApiOptions>().BindConfiguration("ExternalApiOptions");
+            serviceCollection.AddOptions<JWTSettings>().BindConfiguration("JWTSettings");
+            serviceCollection.AddOptions<AdminOptions>().BindConfiguration("AdminOptions");
+            serviceCollection.AddOptions<AzureStorageOptions>().BindConfiguration("AzureStorage");
         }
+    
 
         public static void AddCustomHostedServices(this IServiceCollection serviceCollection)
         {

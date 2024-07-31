@@ -11,7 +11,7 @@ namespace TutorEase.Persistence.Seeds
             return new List<T_User>()
             {
                 new() {
-                    Id = RoleConstants.AdministratorUser,
+                    Id = RoleConstants.TutorUser,
                     UserName = "yummy",
                     Email = "yomeekoko25@gmail.com",
                     EmailConfirmed = true,
@@ -22,7 +22,7 @@ namespace TutorEase.Persistence.Seeds
                     NormalizedUserName="YUMMY",
                     FirstName = "Yome Ekoko",
                     Status = UserStatus.Active,
-                    PoolRole = PoolRole.Administrator,
+                    PoolRole = PoolRole.Tutor,
                     IsLoggedIn = false,
                     ConcurrencyStamp = "71f781f7-e957-469b-96df-9f2035147e45",
                     SecurityStamp = "71f781f7-e957-469b-96df-9f2035147e93",
@@ -33,7 +33,7 @@ namespace TutorEase.Persistence.Seeds
                     UpdatedAt = DateTime.Parse("2023-10-20")
                 },
                 new() {
-                    Id = RoleConstants.LogUser,
+                    Id = RoleConstants.StudentUser,
                     UserName = "ebube",
                     Email = "yomeekoko25@gmail.com",
                     EmailConfirmed = true,
@@ -44,7 +44,7 @@ namespace TutorEase.Persistence.Seeds
                     NormalizedUserName="EBUBE",
                     FirstName = "Ebube Tutor",
                     Status = UserStatus.Active,
-                     PoolRole = PoolRole.Administrator,
+                     PoolRole = PoolRole.Tutor,
                     IsLoggedIn = false,
                     ConcurrencyStamp = "71f781f7-e957-469b-96df-9f2035147e98",
                     SecurityStamp = "71f781f7-e957-469b-96df-9f2035147e37",
