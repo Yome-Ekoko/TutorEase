@@ -15,5 +15,7 @@ namespace TutorEase.Core.Contract
         Task<Response<string>> AcceptBookingAsync(string bookingId);
         Task<Response<string>> RejectBookingAsync(string bookingId);
         Task<Response<List<BookingResponse>>> GetUserBookingsAsync();
+        Task<Response<List<BookingResponse>>> GetTutorBookingsAsync();
+        Task<Response<string>> DeleteBookingAsync(string bookingId);
     }
 }

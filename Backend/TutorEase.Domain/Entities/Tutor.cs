@@ -25,8 +25,10 @@ namespace TutorEase.Domain.Entities
         public List<string> AvailableTime { get; set; } = new List<string>();
         public string HourlyRate { get; set; } = string.Empty;
         public string PreferredCurrency { get; set; } = string.Empty;
-        public T_User user { get; set; }
-        public string UserId { get; set; }
+        public T_User? User { get; set; }
+        public string? UserId { get; set; }= string.Empty;
+        public virtual ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
+
 
         public override void SetNewId()
         {

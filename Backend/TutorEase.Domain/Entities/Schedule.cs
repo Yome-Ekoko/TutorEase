@@ -18,12 +18,12 @@ namespace TutorEase.Domain.Entities
             SetNewId();
         }
         [Required]
-        [StringLength(256)]
-        public string TutorId { get; set; }
+       [StringLength(450)]
+        public string? TutorId { get; set; }=string.Empty;
 
         [Required]
-        [StringLength(256)]
-        public string StudentId { get; set; }
+        [StringLength(450)]
+        public string? StudentId { get; set; }= string.Empty;
 
         [Required]
         public string Day { get; set; }
@@ -36,11 +36,9 @@ namespace TutorEase.Domain.Entities
 
         public BookingStatus Status { get; set; }
 
-        [ForeignKey("TutorId")]
-        public virtual T_User Tutor { get; set; }
+        public virtual Tutor? Tutor { get; set; }
 
-        [ForeignKey("StudentId")]
-        public virtual T_User Student { get; set; }
+        public virtual T_User? Student { get; set; }
 
         public override void SetNewId()
         {

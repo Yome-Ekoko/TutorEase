@@ -71,10 +71,6 @@ namespace TutorEase.Core.Repository
                 var dbContext = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
                 var tutor = await dbContext.Tutor.FirstOrDefaultAsync(x => x.UserId == userId);
 
-                if (tutor == null)
-                {
-                    throw new ApiException("Tutor not found.");
-                }
 
                 return tutor;
             }

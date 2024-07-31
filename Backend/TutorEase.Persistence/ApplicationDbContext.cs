@@ -100,11 +100,13 @@ namespace TutorEase.Persistence
                     .HasColumnName("USER_NAME")
                     .HasMaxLength(256); // Adjust column length
 
+
                 // Each User can have many UserClaims
                 entity.HasMany(e => e.Claims)
                     .WithOne()
                     .HasForeignKey(uc => uc.UserId);
                 //.IsRequired();
+
 
                 // Each User can have many UserLogins
                 entity.HasMany(e => e.Logins)
@@ -125,8 +127,9 @@ namespace TutorEase.Persistence
 
 
                 entity.HasOne(x => x.Tutor)
-                    .WithOne(x => x.user)
+                    .WithOne(x => x.User)
                     .HasForeignKey<Tutor>(x => x.UserId);
+
             });
             #region Schedule Entity
             modelBuilder.Entity<Schedule>(entity =>
@@ -157,15 +160,24 @@ namespace TutorEase.Persistence
                 entity.Property(x => x.Status)
                     .IsRequired();
 
-                entity.HasOne(s => s.Tutor)
-                    .WithMany()
-                    .HasForeignKey(s => s.TutorId)
-                    .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(x => x.Student)
+                    .WithMany(x => x.Schedules)
+                    .HasForeignKey(x => x.StudentId)
+                    .IsRequired();
+                
+                entity.HasOne(x => x.Tutor)
+                    .WithMany(x => x.Schedules)
+                    .HasForeignKey(x => x.TutorId)
+                    .IsRequired();
+                //entity.HasOne(s => s.Tutor)
+                //    .WithMany()
+                //    .HasForeignKey(s => s.TutorId)
+                //    .OnDelete(DeleteBehavior.Restrict);
 
-                entity.HasOne(s => s.Student)
-                    .WithMany()
-                    .HasForeignKey(s => s.StudentId)
-                    .OnDelete(DeleteBehavior.Restrict);
+                //entity.HasOne(s => s.Student)
+                //    .WithMany()
+                //    .HasForeignKey(s => s.StudentId)
+                //    .OnDelete(DeleteBehavior.Restrict);
             });
             #endregion
 

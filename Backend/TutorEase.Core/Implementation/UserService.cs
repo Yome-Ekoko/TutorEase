@@ -157,7 +157,7 @@ namespace TutorEase.Core.Implementation
                 new Claim("firstname", user.FirstName),
                 new Claim("emailAddress", user.Email),
                 new Claim("username", user.UserName),
-                new Claim("ip", ipAddress)
+                new Claim("ip", ipAddress),
             }
             .Union(userClaims)
             .Union(roleClaims);

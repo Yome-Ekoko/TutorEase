@@ -16,5 +16,6 @@ namespace TutorEase.Core.Contract.Repository
         Task<Schedule> Update(Schedule schedule);
         Task Delete(string id);
         Task<List<Tutor>> GetAllTutorScheduleAsync(string tutorId, string day, string time, string time1);
+        Task<List<Schedule>> GetByTutorId(string tutorId);
     }
 }

@@ -12,8 +12,8 @@ using TutorEase.Persistence;
 namespace TutorEase.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240730110539_updateroles")]
-    partial class updateroles
+    [Migration("20240731145501_newmigration")]
+    partial class newmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -140,6 +140,51 @@ namespace TutorEase.Persistence.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("T_USER_TOKENS", (string)null);
+                });
+
+            modelBuilder.Entity("TutorEase.Domain.Entities.Schedule", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("ID");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CREATED_AT");
+
+                    b.Property<string>("Day")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Time")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Time1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TutorId")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("TutorId");
+
+                    b.ToTable("Schedules", (string)null);
                 });
 
             modelBuilder.Entity("TutorEase.Domain.Entities.T_Role", b =>
@@ -472,7 +517,6 @@ namespace TutorEase.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)")
                         .HasColumnName("USER_ID");
@@ -480,7 +524,8 @@ namespace TutorEase.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("UserId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[USER_ID] IS NOT NULL");
 
                     b.ToTable("TUTOR", (string)null);
                 });
@@ -521,6 +566,25 @@ namespace TutorEase.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("TutorEase.Domain.Entities.Schedule", b =>
+                {
+                    b.HasOne("TutorEase.Domain.Entities.T_User", "Student")
+                        .WithMany("Schedules")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TutorEase.Domain.Entities.Tutor", "Tutor")
+                        .WithMany("Schedules")
+                        .HasForeignKey("TutorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+
+                    b.Navigation("Tutor");
+                });
+
             modelBuilder.Entity("TutorEase.Domain.Entities.T_UserRole", b =>
                 {
                     b.HasOne("TutorEase.Domain.Entities.T_Role", "Role")
@@ -542,13 +606,11 @@ namespace TutorEase.Persistence.Migrations
 
             modelBuilder.Entity("TutorEase.Domain.Entities.Tutor", b =>
                 {
-                    b.HasOne("TutorEase.Domain.Entities.T_User", "user")
+                    b.HasOne("TutorEase.Domain.Entities.T_User", "User")
                         .WithOne("Tutor")
-                        .HasForeignKey("TutorEase.Domain.Entities.Tutor", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TutorEase.Domain.Entities.Tutor", "UserId");
 
-                    b.Navigation("user");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TutorEase.Domain.Entities.T_Role", b =>
@@ -562,11 +624,18 @@ namespace TutorEase.Persistence.Migrations
 
                     b.Navigation("Logins");
 
+                    b.Navigation("Schedules");
+
                     b.Navigation("Tokens");
 
                     b.Navigation("Tutor");
 
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("TutorEase.Domain.Entities.Tutor", b =>
+                {
+                    b.Navigation("Schedules");
                 });
 #pragma warning restore 612, 618
         }

@@ -23,7 +23,7 @@ namespace TutorEase.Core.Implementation
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ITutorRepository _tutorRepository;
 
-        public ScheduleService(IScheduleRepository scheduleRepository, IHttpContextAccessor httpContextAccessor,ITutorRepository tutorRepository)
+        public ScheduleService(IScheduleRepository scheduleRepository, IHttpContextAccessor httpContextAccessor, ITutorRepository tutorRepository)
         {
             _scheduleRepository = scheduleRepository;
             _httpContextAccessor = httpContextAccessor;
@@ -32,22 +32,22 @@ namespace TutorEase.Core.Implementation
 
         public async Task<Response<string>> BookScheduleAsync(BookScheduleRequest request)
         {
-            //var userId = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
+            var userId = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
 
-            //if (string.IsNullOrEmpty(userId))
-            //{
-            //    throw new ApiException("User not found.");
-            //}
-          
-                var tutor = await _tutorRepository.GetById(request.TutorId);
-                if (tutor == null)
-                {
-                    throw new Exception("Tutor not found.");
-                }
-          
-            var existingBooking = await _scheduleRepository.GetAllTutorScheduleAsync(request.TutorId,request.Day,request.Time1,request.Time);
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ApiException("User not found.");
+            }
 
-            if (existingBooking.Count==0)
+            var tutor = await _tutorRepository.GetById(request.TutorId);
+            if (tutor == null)
+            {
+                throw new Exception("Tutor not found.");
+            }
+
+            var existingBooking = await _scheduleRepository.GetAllTutorScheduleAsync(request.TutorId, request.Day, request.Time1, request.Time);
+
+            if (existingBooking.Count == 0)
             {
                 throw new Exception("No tutors found for the given criteria.");
             }
@@ -55,15 +55,15 @@ namespace TutorEase.Core.Implementation
             var newSchedule = new Schedule
             {
                 TutorId = request.TutorId,
-               // StudentId = userId,
+                StudentId = userId,
                 Day = request.Day,
                 Time = request.Time,
                 Time1 = request.Time1,
                 Status = BookingStatus.Pending
             };
 
-          
-            await _scheduleRepository.Add(newSchedule);
+
+             await _scheduleRepository.Add(newSchedule);
 
             return new Response<string>(newSchedule.Id, "Booking successful.");
         }
@@ -76,10 +76,15 @@ namespace TutorEase.Core.Implementation
             {
                 throw new ApiException("User not found.");
             }
+            var tutor = await _tutorRepository.GetTutorAsync();
+            if (tutor == null)
+            {
+                throw new Exception("Tutor not found.");
+            }
 
             var booking = await _scheduleRepository.GetById(bookingId);
 
-            if (booking == null || booking.TutorId != userId)
+            if (booking == null || booking.TutorId != tutor.Id)
             {
                 throw new ApiException("Booking not found or unauthorized.");
             }
@@ -99,9 +104,15 @@ namespace TutorEase.Core.Implementation
                 throw new ApiException("User not found.");
             }
 
+            var tutor = await _tutorRepository.GetTutorAsync();
+            if (tutor == null)
+            {
+                throw new Exception("Tutor not found.");
+            }
+
             var booking = await _scheduleRepository.GetById(bookingId);
 
-            if (booking == null || booking.TutorId != userId)
+            if (booking == null || booking.TutorId != tutor.Id)
             {
                 throw new ApiException("Booking not found or unauthorized.");
             }
@@ -136,5 +147,49 @@ namespace TutorEase.Core.Implementation
 
             return new Response<List<BookingResponse>>(response);
         }
+        public async Task<Response<List<BookingResponse>>> GetTutorBookingsAsync()
+        {
+            var tutorId = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
+
+            if (string.IsNullOrEmpty(tutorId))
+            {
+                throw new ApiException("User not found.");
+            }
+            var tutor = await _tutorRepository.GetTutorAsync();
+            if (tutor == null)
+            {
+                throw new Exception("Tutor not found.");
+            }
+
+            var bookings = await _scheduleRepository.GetByTutorId(tutor.Id);
+
+            var response = bookings.Select(booking => new BookingResponse
+            {
+                BookingId = booking.Id,
+                TutorId = booking.TutorId,
+                StudentId = booking.StudentId,
+                Day = booking.Day,
+                Time = booking.Time,
+                Time1 = booking.Time1,
+                Status = booking.Status
+            }).ToList();
+
+            return new Response<List<BookingResponse>>(response);
+        }
+        public async Task<Response<string>> DeleteBookingAsync(string bookingId)
+        {
+            var booking = await _scheduleRepository.GetById(bookingId);
+
+            if (booking == null)
+            {
+                throw new ApiException("Booking not found.");
+            }
+
+            await _scheduleRepository.Delete(bookingId);
+
+            return new Response<string>(bookingId, "Booking deleted.");
+        }
     }
 }
+
+

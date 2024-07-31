@@ -48,20 +48,28 @@ namespace TutorEase.Core.Repository
             using (var scope = _serviceScopeFactory.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
-                // Retrieve tutors based on the criteria
+
+                // Fetch all tutors first
                 var tutors = await dbContext.Tutor
-                    .Where(t => t.Id == tutorId
-         && t.AvailableDays.Contains(day)
-         && t.AvailableTime.Contains(time)
-         && t.AvailableTime1.Contains(time1))
+                    .Where(t => t.Id == tutorId)
                     .ToListAsync();
-                if (tutors == null || !tutors.Any())
+
+                // Apply additional filtering in memory
+                var filteredTutors = tutors
+                    .Where(t => t.AvailableDays.Contains(day)
+                             && t.AvailableTime.Contains(time)
+                             && t.AvailableTime1.Contains(time1))
+                    .ToList();
+
+                if (filteredTutors == null || !filteredTutors.Any())
                 {
                     throw new ApiException("No tutors found for the given criteria.");
                 }
-                return tutors;
+
+                return filteredTutors;
             }
         }
+
 
         public async Task<List<Schedule>> GetByUserId(string userId)
         {
@@ -113,6 +121,16 @@ namespace TutorEase.Core.Repository
 
                 dbContext.Schedules.Remove(schedule);
                 await dbContext.SaveChangesAsync();
+            }
+        }
+        public async Task<List<Schedule>> GetByTutorId(string tutorId)
+        {
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
+                return await dbContext.Schedules
+                    .Where(s => s.TutorId == tutorId)
+                    .ToListAsync();
             }
         }
     }

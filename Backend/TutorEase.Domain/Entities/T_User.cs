@@ -21,6 +21,7 @@ namespace TutorEase.Domain.Entities
 
         public Tutor? Tutor { get; set; }
         public string? TutorId { get; set; } = string.Empty;
+        public virtual ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
 
         public virtual ICollection<T_UserRole> UserRoles { get; set; } = new List<T_UserRole>();
         public virtual ICollection<IdentityUserClaim<string>> Claims { get; set; } = new List<IdentityUserClaim<string>>();
